@@ -1,19 +1,14 @@
 import 'package:flutter/material.dart';
 
-void main() {
-  runApp(const MainApp());
-}
+void main() => runApp(NewsApp());
 
-class MainApp extends StatelessWidget {
-  const MainApp({super.key});
-
+class NewsApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: Scaffold(
-        body: Center(
-          child: Text('Hello World!'),
-        ),
+    return MaterialApp(
+      title: 'News App',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
       ),
     );
   }
