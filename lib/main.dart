@@ -244,3 +244,38 @@ class SearchScreen extends SearchDelegate {
   }
 }
 
+class ArticleScreen extends StatelessWidget {
+  final String url;
+
+  ArticleScreen(this.url);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Article'),
+      ),
+      body: WebView(
+        initialUrl: url,
+        javascriptMode: JavascriptMode.unrestricted,
+        onWebResourceError: (error) {
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: Text("Error"),
+              content: Text("There was an error loading the article. Please try again later."),
+              actions: <Widget>[
+                TextButton(
+                  child: Text("Close"),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
