@@ -171,4 +171,76 @@ class _SourceScreenState extends State<SourceScreen> {
     );
   }
 }
+class SearchScreen extends SearchDelegate {
+  Future<List> searchArticles(String query) async {
+    final response = await http.get(Uri.parse('https://newsapi.org/v2/top-headlines?country=id&q=$query&apiKey=eadcfcc940ee4e7e8a66578de0ca32a7'));
+
+    if (response.statusCode == 200) {
+      var jsonResponse = json.decode(response.body);
+      return jsonResponse['articles'] ?? [];
+    } else {
+      return [];
+    }
+  }
+ 
+  @override
+  List<Widget> buildActions(BuildContext context) {
+    return [
+      IconButton(
+        icon: Icon(Icons.clear),
+        onPressed: () {
+          query = '';
+          showSuggestions(context);
+        },
+      ),
+    ];
+  }
+
+  @override
+  Widget buildLeading(BuildContext context) {
+    return IconButton(
+      icon: AnimatedIcon(
+        icon: AnimatedIcons.menu_arrow,
+        progress: transitionAnimation,
+      ),
+      onPressed: () {
+        close(context, null);
+      },
+    );
+  }
+
+  @override
+  Widget buildResults(BuildContext context) {
+    return FutureBuilder<List>(
+        future: searchArticles(query),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            return ListView.builder(
+              itemCount: snapshot.data?.length,
+              itemBuilder: (context, index) {
+                return ListTile(
+                  title: Text(snapshot.data?[index]['title']),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => ArticleScreen(snapshot.data?[index]['url'])),
+                    );
+                  },
+                );
+              },
+            );
+          } else if (snapshot.hasError) {
+            return Text("${snapshot.error}");
+          }
+
+          return CircularProgressIndicator();
+        },
+      );
+  }
+
+  @override
+  Widget buildSuggestions(BuildContext context) {
+    return Container();
+  }
+}
 
